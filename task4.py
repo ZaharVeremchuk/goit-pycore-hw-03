@@ -1,5 +1,5 @@
-from datetime import datetime
-import re 
+import datetime
+import re
 
 # У межах вашої організації, ви відповідаєте за організацію привітань колег з днем народження.
 # Щоб оптимізувати цей процес, вам потрібно створити функцію get_upcoming_birthdays,
@@ -8,24 +8,27 @@ import re
 # У вашому розпорядженні є список users, кожен елемент якого містить інформацію про ім'я користувача та його день народження.
 # Оскільки дні народження колег можуть припадати на вихідні, ваша функція також повинна враховувати це та переносити дату привітання на наступний робочий день, якщо необхідно.
 
-def get_upcoming_birthdays(users: dict[str, str]):
-    today = datetime.today().date()
+def get_upcoming_birthdays(users: list[dict[str, str]]):
+    today = datetime.datetime.today().date()
     next_week_birthday = dict()
+
     for user in users:
-        name = user["name"]
         birthday = re.sub(r'\b\d{4}\b', str(today.year), user["birthday"])
-        birthday = datetime.strptime(birthday, "%Y.%m.%d").date()
-        if (birthday - today).days <= 7:
-            next_week_birthday['name'] = name
-            next_week_birthday['birthday'] = datetime.strftime(birthday, '%Y.%m.%d')
+        birthday = datetime.datetime.strptime(birthday, "%Y.%m.%d").date()
+        if 0 < (birthday - today).days <= 7:
+            if birthday.weekday() == 6: # if Sunday
+                birthday = birthday + datetime.timedelta(days=1)
+            elif birthday.weekday() == 5: # if Sutarday
+                birthday = birthday + datetime.timedelta(days=2)
+            next_week_birthday[user["name"]] = birthday.strftime('%Y.%m.%d')
     
     return next_week_birthday
 
         
 
 users = [
-    {"name": "John Doe", "birthday": "1985.07.09"},
-    {"name": "Jane Smith", "birthday": "1990.01.27"}
+    {"name": "John Doe", "birthday": "1985.07.14"},
+    {"name": "Jane Smith", "birthday": "1990.01.15"}
 ]
 
 print(get_upcoming_birthdays(users))
