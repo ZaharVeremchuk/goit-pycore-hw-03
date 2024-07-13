@@ -10,7 +10,7 @@ import re
 
 def get_upcoming_birthdays(users: list[dict[str, str]]):
     today = datetime.datetime.today().date()
-    next_week_birthday = dict()
+    next_week_birthday = []
 
     for user in users:
         birthday = re.sub(r'\b\d{4}\b', str(today.year), user["birthday"])
@@ -20,7 +20,8 @@ def get_upcoming_birthdays(users: list[dict[str, str]]):
                 birthday = birthday + datetime.timedelta(days=1)
             elif birthday.weekday() == 5: # if Sutarday
                 birthday = birthday + datetime.timedelta(days=2)
-            next_week_birthday[user["name"]] = birthday.strftime('%Y.%m.%d')
+            new_dict = {user["name"]: birthday.strftime('%Y.%m.%d')}
+            next_week_birthday.append(new_dict)
     
     return next_week_birthday
 
@@ -28,7 +29,7 @@ def get_upcoming_birthdays(users: list[dict[str, str]]):
 
 users = [
     {"name": "John Doe", "birthday": "1985.07.14"},
-    {"name": "Jane Smith", "birthday": "1990.01.15"}
+    {"name": "Jane Smith", "birthday": "1990.07.17"}
 ]
 
 print(get_upcoming_birthdays(users))
